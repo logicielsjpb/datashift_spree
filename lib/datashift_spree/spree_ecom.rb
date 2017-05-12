@@ -21,15 +21,15 @@
 #             N.B Some or all of Spree Tests may fail very first time run,
 #             as the database is auto generated
 # =>          
-require 'spree'
-require 'spree_core'
+require 'solidus'
+require 'solidus_core'
     
 module DataShift
     
   module SpreeEcom
         
     def self.root
-      Gem.loaded_specs['spree_core'] ? Gem.loaded_specs['spree_core'].full_gem_path  : ""
+      Gem.loaded_specs['solidus_core'] ? Gem.loaded_specs['solidus_core'].full_gem_path  : ""
     end
     
     # Helpers so we can cope with both pre 1.0 and post 1.0 versions of Spree in same datashift version
@@ -69,7 +69,7 @@ module DataShift
     end
     
     def self.version
-      Gem.loaded_specs['spree'] ? Gem.loaded_specs['spree'].version.version : "0.0.0"
+      Gem.loaded_specs['solidus'] ? Gem.loaded_specs['solidus'].version.version : "0.0.0"
     end
     
     def self.is_namespace_version
@@ -85,8 +85,8 @@ module DataShift
     end
 
     def self.load()
-      require 'spree'
-      require 'spree_core'
+      require 'solidus'
+      require 'solidus_core'
     end   
   end
 end 

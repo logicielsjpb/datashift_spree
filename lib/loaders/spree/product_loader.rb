@@ -26,7 +26,9 @@ module DataShift
 
         # depending on version get_product_class should return us right class, namespaced or not
 
-        super( DataShift::SpreeEcom::get_product_class, product, opts)
+        klass = DataShift::SpreeEcom::get_product_class
+        logger.debug("ProductLoader klass [#{klass}]")
+        super( klass, product, opts)
 
         raise "Failed to create Product for loading" unless @load_object
       end
