@@ -111,14 +111,14 @@ module DataShift
               values = current_value.to_s.split(Delimiters::multi_assoc_delim)
 
               if(@load_object.variants.size == values.size)
-                @load_object.variants.each_with_index {|v, i| v.price = values[i].to_f }
-                @load_object.save
+                @load_object.variants.each_with_index {|v, i| v.update_attributes(price: values[i].to_f) }
               else
                 puts "WARNING: Price entries did not match number of Variants - None Set"
               end
             end
 
           else
+            logger.debug "Skipping variant_price. No variants found."
             super
           end
 
@@ -132,14 +132,14 @@ module DataShift
               values = current_value.to_s.split(Delimiters::multi_assoc_delim)
 
               if(@load_object.variants.size == values.size)
-                @load_object.variants.each_with_index {|v, i| v.cost_price = values[i].to_f }
-                @load_object.save
+                @load_object.variants.each_with_index {|v, i| v.update_attributes(cost_price: values[i].to_f) }
               else
                 puts "WARNING: Cost Price entries did not match number of Variants - None Set"
               end
             end
 
           else
+            logger.debug "Skipping variant_cost_price. No variants found."
             super
           end          
           
@@ -153,8 +153,9 @@ module DataShift
               values = current_value.to_s.split(Delimiters::multi_assoc_delim)
 
               if(@load_object.variants.size == values.size)
-                @load_object.variants.each_with_index {|v, i| v.sku = values[i].to_s }
-                @load_object.save
+                @load_object.variants.each_with_index do |v, i|
+                  v.update_attributes(sku: values[i])
+                end
               else
                 puts "WARNING: SKU entries did not match number of Variants - None Set"
               end
@@ -508,7 +509,7 @@ module DataShift
           logger.info "Variants: #{@load_object.variants.inspect}"
 
           # we expect to get corresponding images for every variant (might have more than one image for each variant!)
-          variants_images_list = get_each_assoc 
+          variants_images_list = get_each_assoc
 
           variants_images_list.each_with_index do |variant_images, i|
 
@@ -520,7 +521,7 @@ module DataShift
               images = []
               images << variant_images 
             end
-  
+
             logger.info "Setting #{images.count} images for variant #{variants[i].name}..."
 
             # reset variant images to attach to variant
@@ -621,7 +622,6 @@ module DataShift
               variants[i].save
               logger.debug("Variant assigned Images from : #{var_images.inspect}")
             rescue => e
-              puts "ERROR - Failed to assign attachments to #{variants[i].class} #{variants[i].id}"
               logger.error("Failed to assign attachments to #{variants[i].class} #{variants[i].id}")
             end
   
@@ -734,7 +734,6 @@ module DataShift
               @load_object.master.save
               logger.debug("Master Variant assigned Images from : #{var_images.inspect}")
             rescue => e
-              puts "ERROR - Failed to assign attachment to #{@load_object.master.class} #{@load_object.master.id}"
               logger.error("Failed to assign attachment to #{@load_object.master.class} #{@load_object.master.id}")
             end
 
