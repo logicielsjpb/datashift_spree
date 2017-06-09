@@ -87,7 +87,7 @@ module DataShift
 
           add_taxons
 
-        elsif(current_method_detail.operator?('product_properties') )
+        elsif(current_method_detail.operator?('product_properties') && current_value )
 
           add_properties
 
@@ -118,7 +118,7 @@ module DataShift
             end
 
           else
-            logger.debug "Skipping variant_price. No variants found."
+            return if current_value.blank?
             super
           end
 
@@ -139,7 +139,7 @@ module DataShift
             end
 
           else
-            logger.debug "Skipping variant_cost_price. No variants found."
+            return if current_value.blank?
             super
           end          
           
@@ -162,6 +162,7 @@ module DataShift
             end
 
           else
+            return if current_value.blank?
             super
           end
           
@@ -489,6 +490,7 @@ module DataShift
       end
 
       def add_variant_images(current_value)
+        return if current_value.blank?
         
         save_if_new
 
