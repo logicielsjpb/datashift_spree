@@ -27,12 +27,12 @@ module DatashiftSpree
       # We're assuming run from a rails app/top level dir
       require File.expand_path('config/environment.rb')
 
-      max_user = Alchemy::User.last.id
+      max_user = Spree::User.last.id
 
       begin
-        invoke 'datashift:import:csv', [], options.merge({model: Alchemy::User})
+        invoke 'datashift:import:csv', [], options.merge({model: Spree::User})
       rescue => e
-        log :error, "Fcm Config was not validated. Please check log above, fix and rerun"
+        logger.error "Fcm Config was not validated. Please check log above, fix and rerun"
         exit(-1)
       end
 
@@ -40,7 +40,7 @@ module DatashiftSpree
 
       puts "default_password is #{default_password}"
 
-      users =  Alchemy::User.where( "id > ?", max_user )
+      users =  Spree::User.where( "id > ?", max_user )
     end
 
 
@@ -144,6 +144,31 @@ module DatashiftSpree
 
     end
 
+    desc "products", "Populate Spree Products data from Shopify .xls (Excel) or CSV file"
+
+    method_option :input, :aliases => '-i', :required => true, :desc => "The import file (.xls or .csv)"
+    method_option :verbose, :aliases => '-v', :type => :boolean, :desc => "Verbose logging"
+    method_option :sku_prefix, :aliases => '-s', :desc => "Prefix to add to each SKU before saving Product"
+    method_option :dummy, :aliases => '-d', :type => :boolean, :desc => "Dummy run, do not actually save Image or Product"
+
+    def products()
+      # assuming run from a rails app/top level dir...
+      require File.expand_path('config/environment.rb')
+
+      # Use default logging formatter so that PID and timestamp are not suppressed.
+      Rails.application.config.log_formatter = ::Logger::Formatter.new
+
+      input = options[:input]
+
+      require 'shopify_products_migrator'
+
+      loader = DataShift::SpreeEcom::ShopifyProductsMigrator.new(nil, :verbose => options[:verbose])
+
+      # YAML configuration file to drive defaults etc
+      loader.perform_load(input, options)
+
+
+    end
 
 
   end
