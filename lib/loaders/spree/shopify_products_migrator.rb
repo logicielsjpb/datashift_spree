@@ -101,6 +101,9 @@ module DataShift
       # product to be created and we need to put the Variants column before the
       # variant_sku and variant_price column.
       def add_missing_columns
+        # DO NOT ACCESS DATA FROM THE ROWS UNTIL THE END OF THIS METHOD.
+        # OTHERWISE, COLUMNS INDEXES MIGHT BE WRONG.
+
         # SKU, price and shipping category must be defined early in the process
         @headers =
             [@@sku_col_name, @@shipping_cat_col_name, @@price_col_name] + @headers
@@ -117,12 +120,6 @@ module DataShift
 
           # Insert empty column before variant_sku for the variants column
           row.insert(variant_sku_col_idx, '')
-
-          # Set the proper value for the sku and price columns
-          row[col_index(@@sku_col_name)] =
-              get_value_by_header(@@variant_sku_col_name, row)
-          row[col_index(@@price_col_name)] =
-              get_value_by_header(@@variant_price_col_name, row)
           row
         end
       end
@@ -162,11 +159,23 @@ module DataShift
         # - Merge variant inventory quantities and append the default inventory
         #   name.
         @parsed_file.map! do |row|
+          variants_str = ''
+          master_sku = get_value_by_header(@@variant_sku_col_name, row)
+
           # Extract variants for this specific row from the variants array
           variants, variant_lines =
               variant_lines.partition {|v| v[handle_col_idx] == row[handle_col_idx]}
 
-          variants_str = ''
+          # Set the proper value for the sku and price columns
+          unless variants.empty?
+            # TODO improve the master SKU
+            master_sku.slice!(5..master_sku.length) # Take only the first =5 chars as the main sku
+          end
+
+          row[col_index(@@sku_col_name)] = master_sku
+          row[col_index(@@price_col_name)] =
+              get_value_by_header(@@variant_price_col_name, row)
+
 
           # Put the default inventory name beore the inventory qty
           row[stocK_item_col_idx] =
@@ -226,6 +235,17 @@ module DataShift
       # If column Published is not set to TRUE, we have a variant line
       def variant_line?(row)
         row[col_index(@@published_col_name)].blank?
+      end
+
+      def with_variants?(handle)
+        count = 0
+        @parsed_file.each do |row|
+          if row[col_index(@@handle_col_name)] == handle
+            count += 1
+          end
+        end
+
+        count
       end
 
     end
