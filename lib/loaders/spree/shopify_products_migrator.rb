@@ -1,9 +1,9 @@
-  # Copyright:: (c) Autotelik Media Ltd 2010
-# Author ::   Tom Statter
+# Author ::   Jean-Philippe Boily, eng. <jpboily@logicielsjpb.com>
 # Date ::     Aug 2010
 # License::   MIT ?
 #
-# Details::   Specific over-rides/additions to support Spree Products
+# Details::   Specific over-rides/additions to support Shopify import into
+# Spree Products
 #
 require 'spree_base_loader'
 require 'spree_ecom'
