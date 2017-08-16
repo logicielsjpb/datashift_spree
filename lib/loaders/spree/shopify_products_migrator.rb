@@ -14,12 +14,6 @@ module DataShift
 
     class ShopifyProductsMigrator < ProductLoader
 
-      # TODO - We need to merge lines on handle since this is how Shopify
-      # specifies multiple values for a product
-
-      # TODO - If we want to use the tags column, we need to convert the commas
-      # in the text to pipes (|)
-
       def initialize(product, options)
         @@shopify_to_spree_headers = {
           'Body (HTML)' => 'Description',
@@ -51,7 +45,7 @@ module DataShift
       end
 
       # Overriding this method allows us to override columns from the Shopify
-      # export before it is passed to the LoaderBase
+      # export before they get passed to the LoaderBase
       def populate_method_mapper_from_headers( headers, options = {} )
         @headers = headers
 
@@ -169,7 +163,7 @@ module DataShift
           # Set the proper value for the sku and price columns
           unless variants.empty?
             # TODO improve the master SKU
-            master_sku.slice!(5..master_sku.length) # Take only the first =5 chars as the main sku
+            master_sku = master_sku.slice(0..4) # Take only the first =5 chars as the main sku
           end
 
           row[col_index(@@sku_col_name)] = master_sku
