@@ -7,6 +7,7 @@
 #
 require 'spree_base_loader'
 require 'spree_ecom'
+require 'product_loader'
 
 module DataShift
 
