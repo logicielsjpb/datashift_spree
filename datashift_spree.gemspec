@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
     "datashift_spree.gemspec",
     'VERSION', 
     "LICENSE.txt", 
-    "{lib}/**/*"].exclude("rdoc").exclude("nbproject").exclude("fixtures").exclude(".log").exclude(".contrib").to_a
+    "{lib}/**/*"]
   
   s.test_files = Dir["{spec}/*"]
   
