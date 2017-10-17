@@ -1,3 +1,5 @@
+$LOAD_PATH.push File.expand_path('../lib', __FILE__)
+
 require 'rake'
 
 
@@ -12,14 +14,14 @@ Gem::Specification.new do |s|
   s.description = "Comprehensive Excel/CSV import/export for Spree, Products,Images, any model with full associations"
   s.email = "rubygems@autotelik.co.uk"
   
-  s.files = FileList["datashift_spree.thor", 
+  s.files = Dir["datashift_spree.thor", 
     "README.markdown",
     "datashift_spree.gemspec",
     'VERSION', 
     "LICENSE.txt", 
     "{lib}/**/*"].exclude("rdoc").exclude("nbproject").exclude("fixtures").exclude(".log").exclude(".contrib").to_a
   
-  s.test_files = FileList["{spec}/*"]
+  s.test_files = Dir["{spec}/*"]
   
   s.homepage = "http://github.com/autotelik/datashift_spree"
   s.licenses = ["MIT"]
